@@ -37,4 +37,27 @@ I install [Windows OS version of Ruby](https://rubyinstaller.org/downloads/) bec
 ![image_installation_ruby]({{site.url}}/assets/img/2022-01-09-making-blog-using-jekyll-chirpy-theme-on-windows-os/installation_ruby.png){: width="300" height="300"){: .left}<br><br><br><br><br><br><br><br><br><br>
 
 After installation ruby, Enter number 3 in console window as below.<br>
-![image_ruby_console]({{site.url}}/assets/img/2022-01-09-making-blog-using-jekyll-chirpy-theme-on-windows-os/ruby_console.png){: width="300" height="300"){: .left}<br><br><br><br><br><br><br>
+![image_ruby_console]({{site.url}}/assets/img/2022-01-09-making-blog-using-jekyll-chirpy-theme-on-windows-os/ruby_console.png){: width="300" height="300"){: .left}<br><br><br><br><br><br> 
+
+Move to directory containing blog code and then installation gem dependencies.
+![image_installation_bundle]({{site.url}}/assets/img/2022-01-09-making-blog-using-jekyll-chirpy-theme-on-windows-os/installation_bundle.png){: width="300" height="300"){: .left}<br><br><br><br><br>
+<br><br>
+
+## Installation WSL
+After all gem dependencies are installed, You need to run init.sh script to initialize it.
+But, Because shell script is only for Linux, You can't run init.sh directly on Windows. 
+so you have to install WSL(Windows Subsystem for Linux) to run it on Windows.
+
+Start -> Turn Windows features on or off -> Check Windows Subsystem for Linux
+And restart Windows
+And install Ubuntu in Windows Store and run it.
+You need to create user. now you can run shell script.
+
+## Run init.sh
+Go to the directory where your blog source code is stored.<br>
+Enter the cmd command at windows file explorer address bar.
+
+Entering bash command in cmd, shell environment is created.<br>
+Now, Run init.sh!<br>
+If you want to know about init.sh, refer to the follow link [Chirpy Getting Started](https://github.com/cotes2020/jekyll-theme-chirpy/wiki/Getting-started)
+
