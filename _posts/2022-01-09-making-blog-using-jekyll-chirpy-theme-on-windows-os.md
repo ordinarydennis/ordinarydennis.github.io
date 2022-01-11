@@ -55,9 +55,27 @@ You need to create user. now you can run shell script.
 
 ## Run init.sh
 Go to the directory where your blog source code is stored.<br>
-Enter the cmd command at windows file explorer address bar.
-
+Enter the cmd command at windows file explorer address bar.<br>
 Entering bash command in cmd, shell environment is created.<br>
 Now, Run init.sh!<br>
 If you want to know about init.sh, refer to the follow link [Chirpy Getting Started](https://github.com/cotes2020/jekyll-theme-chirpy/wiki/Getting-started)
 
+You need to set up user name and email for git because init.sh use git command when running. 
+![image_set_git_info]({{site.url}}/assets/img/2022-01-09-making-blog-using-jekyll-chirpy-theme-on-windows-os/set_git_info.png){: width="400" height="400"){: .left}<br><br><br><br><br><br>
+
+If init.sh has run successfully, all you need to is push to your repository.
+![image_init_successful]({{site.url}}/assets/img/2022-01-09-making-blog-using-jekyll-chirpy-theme-on-windows-os/init_successful.png){: width="400" height="400"){: .left}<br><br><br><br>
+
+Now, Go to action tab in your repository. you can identify what you have committed is building.
+![image_building]({{site.url}}/assets/img/2022-01-09-making-blog-using-jekyll-chirpy-theme-on-windows-os/building.png){: width="400" height="400"){: .left}<br><br><br><br><br><br>
+
+It almost done!
+After build is completed, Go to pages in settings.<br>
+You need to change branch from master to gh-pages.<br>
+gh-pages is a branch that is made just after it is built in action tab.
+![image_change_branch]({{site.url}}/assets/img/2022-01-09-making-blog-using-jekyll-chirpy-theme-on-windows-os/change_branch.png){: width="400" height="400"){: .left}<br><br><br><br><br><br><br>
+
+It's done!!<br>
+Let's go to your new blog. https://[your github id].github.io <br>
+From now on, you can upload your post in blog.<br>
+![image_new_blog]({{site.url}}/assets/img/2022-01-09-making-blog-using-jekyll-chirpy-theme-on-windows-os/new_blog.png){: width="300" height="300"){: .left}<br><br><br><br><br><br><br><br><br>
