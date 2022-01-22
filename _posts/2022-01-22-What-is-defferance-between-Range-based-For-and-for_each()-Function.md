@@ -19,7 +19,7 @@ Today, I'm going to talk about the proper use of the two loop statement above.
 ## 1. Range-based For Loop is familiar.
 Existing for and while loops need to define variables to repeat logic like i, j, k.
 
-```C++
+```cpp
 int main()
 {
   for(int i = 0; i < 10; i++)
@@ -33,7 +33,7 @@ int main()
 But Range-based for loop to iterate sequence container don't need to define any variables.
 You just define variable to access to element of container.
 
-```C++
+```cpp
 int main() 
 {
     std::vector<int> v{ 1,2,3,4,5 };
@@ -56,13 +56,13 @@ std::for_each() is template function which take two parameters(begin() and end()
 one funtion object which will use elements of the sequence container.
 The prototype of the function looks like
 
-```C++
+```cpp
 template <class InputItr, class Functor>
 Functor for_each(InputItr begin, InputItr end, Functor fnobj);
 ```
 Where InputIter is a type which meets the requirement of an InputIterator concept and Functor is a type of callable object like std::function, lamda expression or a functor. Functor should be moveconstructible and match the signature of the following functions:
 
-```C++
+```cpp
 void fun(const Type &a); 
 or
 void fun(Type a); 
@@ -71,7 +71,7 @@ Where the type Type should be such that an object of InputItr can be dereference
 
 Let's look at the follow example code:
 
-```C++
+```cpp
 #include <iostream>
 #include <vector>
 #include <algorithm>

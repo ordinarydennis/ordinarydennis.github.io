@@ -7,7 +7,6 @@ tags: [C++, STL]
 pin: true
 ---
 
- 
 ## Introduction
 Sometimes, programmers would wonder whether use empty() or size() when checking container is empty.  
 Today, I am going to talk about why we should use empty() instead of size().
@@ -41,7 +40,6 @@ Finally, the biggest advantage of using empty() is that it is easy to type.
 ## 2. empty() is More Faster than size() 
 empty() is implemented as an inline function. also empty() is a constant-time operation for all standard cotainers.
 whereas some implementations of size() is O(n) time complexity such as list::size().
-
 The reason that list::size() has linear time is bacause list container offer splice().
 in order that size() has constent time complexity, size must be updated whenever every member function operate. 
 It is the same when calling splice(). for updating size, need to count the number of elements to be spliced.
@@ -49,15 +47,9 @@ So if list::size() must have constent time complexity, splice() time complexity 
 However, if list::size() doesn't need to be constent time(doesn't need to update size), splice() can be a constant time.
 <br><br>
 
-
 ## Conclusion
 The reason that use empty() instead of size() is simple.
-Because empty() is more easier and faster than size().
-
-So call empty whenever you need to know whether a container has
-zero elements.
-
-
+Because empty() is more easier and faster than size(). So call empty whenever you need to know whether a container has zero elements.
 <br><br>
 
 Referred to [Effective STL](https://www.amazon.com/Effective-STL-Addison-Wesley-Professional-Computing-ebook/dp/B004V4432W), [vector::empty() and vector::size() in C++ STL](https://www.geeksforgeeks.org/vectorempty-vectorsize-c-stl/)
