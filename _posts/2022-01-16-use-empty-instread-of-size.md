@@ -29,11 +29,9 @@ Today, I am going to talk about why we should use empty() instead of size().
     //someting..
   }
 ```
-There are two kind of code. Which code is more easy to understand and type?<br>
-empty() function does not use any comparison operators <br>
-It is possible to prevent bugs due to incorrect use of comparison operators.
-(such as If had to use '>' but used '<')<br>
-Also the code using empty() is easy to understand than size() because it is simpler.<br> 
+There are two kind of code. Which code is more easy to understand and type?
+empty() function does not use any comparison operators. It is possible to prevent bugs due to incorrect use of comparison operators.(such as If had to use '>' but used '<')
+Also the code using empty() is easy to understand than size() because it is simpler.
 Finally, the biggest advantage of using empty() is that it is easy to type.
 <br><br>
 
@@ -48,8 +46,7 @@ However, if list::size() doesn't need to be constent time(doesn't need to update
 <br><br>
 
 ## Conclusion
-The reason that use empty() instead of size() is simple.
-Because empty() is more easier and faster than size(). So call empty whenever you need to know whether a container has zero elements.
+The reason that use empty() instead of size() is simple. Because empty() is more easier and faster than size(). So call empty whenever you need to know whether a container has zero elements.
 <br><br>
 
 Referred to [Effective STL](https://www.amazon.com/Effective-STL-Addison-Wesley-Professional-Computing-ebook/dp/B004V4432W), [vector::empty() and vector::size() in C++ STL](https://www.geeksforgeeks.org/vectorempty-vectorsize-c-stl/)
