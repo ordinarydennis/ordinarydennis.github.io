@@ -1,5 +1,5 @@
 ---
-title: What is defferance between Range-based For and std::for_each() Function
+title: What is difference between Range-based loop and std::for_each()
 author:
   name: Dennis
 categories: [C++]
