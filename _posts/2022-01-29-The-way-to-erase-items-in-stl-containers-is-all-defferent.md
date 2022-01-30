@@ -129,8 +129,8 @@ int main()
 ```
 
 But It is not simple in associative container.
-There are two way that you can use. one is easy to code but inefficient.
-another is efficient.
+There are two way that you can use. One is easy to code but inefficient.
+Another is efficient.
 The way which is easy to code is using remove_copy_if().
 It is add element not satisfying condition to new container then swap original container with new container.
 
@@ -161,6 +161,91 @@ int main()
 }
 ```
 The drawback to this approach is that it involves copying all the elements that aren't being removed.
+You can avoid this cost by removing the elements from original container directly.
+However, Because associative container is not support remove function like remove_if(), You have to write loop to iterate over the elements of the container.
+The code is simple like this:
+```cpp
+bool isOdd(int num)
+{
+	return num % 2 != 0;
+}
+
+int main()
+{
+	std::multiset<int> oc = { 1, 2, 3, 111, 4, 5, 111, 6 };
+
+	for (auto i = oc.begin(); i != oc.end(); ++i)
+	{
+		if (isOdd(*i))
+		{
+			oc.erase(i);
+		}
+	}
+
+	for_each(oc.begin(), oc.end(), [](int e) { std::cout << e << " "; });
+
+	std::cout << std::endl;
+
+	return 0;
+}
+```
+Will the code work well? No,  The 'i' has been invalidated after the erase function returns.
+so, When the invalidated 'i' is increased(++i) in the loop, a runtime error occurs.
+To avoid this problem, You make 'i' point to next element before calling erase function.
+The easiest way to do that is to use postfix increment on i.
+```cpp
+for (auto i = oc.begin(); i != oc.end();)
+{
+	if (isOdd(*i))
+	{
+		oc.erase(i++);
+	}
+	else
+	{
+		++i;
+	}
+}
+```
+At this time, the increment statement of the loop must be deleted. <br>
+Memory contiguous containers also have the above problem.
+Suppose we erase element satisfying specific condition while looping the container.
+```cpp
+int main()
+{
+	std::vector<int> oc = { 1, 2, 3, 111, 4, 5, 111, 6 };
+
+	for (auto i = oc.begin(); i != oc.end(); ++i)
+	{
+		if (isOdd(*i))
+		{
+			oc.erase(i);
+		}
+	}
+
+	for_each(oc.begin(), oc.end(), [](int e) { std::cout << e << " "; });
+
+	std::cout << std::endl;
+
+	return 0;
+}
+```
+This is the code to pass an iterator to the erase function if the elements of the vector are odd.
+Will the above code work well? No, The above code ocurrs a runtime error.
+In memory contiguouse container, Invoking erase not only invalidates all iterators pointing to the erased element, it also invalidates all iterators beyond the erased element. It doesn't matter if we write i++, ++i.
+```cpp
+for (auto i = oc.begin(); i != oc.end();)
+{
+	if (isOdd(*i))
+	{
+		i = oc.erase(i);
+	}
+	else
+	{
+		++i;
+	}
+}
+```
+
 
 
 <br><br>
