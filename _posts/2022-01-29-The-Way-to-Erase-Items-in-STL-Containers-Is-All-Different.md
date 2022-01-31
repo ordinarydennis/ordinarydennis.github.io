@@ -1,5 +1,5 @@
 ---
-title: The Way to Erase Items in STL Containers is All Different.
+title: The Way to Erase Items in STL Containers Is All Different.
 author:
   name: Dennis
 categories: [C++]
