@@ -1,5 +1,5 @@
 ---
-title: The way to erase items in STL containers is all different.
+title: The Way to Erase Items in STL Containers is All Different.
 author:
   name: Dennis
 categories: [C++]
@@ -232,6 +232,8 @@ int main()
 This is the code to pass an iterator to the erase function if the elements of the vector are odd.
 Will the above code work well? No, The above code ocurrs a runtime error.
 In memory contiguouse container, Invoking erase not only invalidates all iterators pointing to the erased element, it also invalidates all iterators beyond the erased element. It doesn't matter if we write i++, ++i.
+
+To solve this problem in memory contiguous container, need to use return value of erase.
 ```cpp
 for (auto i = oc.begin(); i != oc.end();)
 {
@@ -245,12 +247,20 @@ for (auto i = oc.begin(); i != oc.end();)
 	}
 }
 ```
-
-
-
+If the element satisfies the condition, passes the iterator to erase function and overwrites it with return value of erase function. Otherwise junst increases the iterator.
 <br><br>
 
 ## Conclusion
+To summarize<br>
+1. If you want to erase specific value in a container :<br>
+	- If the container is memory contiguous container, Use erase-remove idiom.
+	- If the container is list, Use remove member function.
+	- If the container is associative container, Use erase member function.
+
+2. If you want to erase all elements satisfying specific predicate :<br>
+	- If the container is memory contiguous container, Use erase-remove_if idiom.
+	- If the container is list, Use remove_if member function.
+	- If the container is associative container, Use the way to swap after using remove_copy_if() or write loop to iterate over the container.
 
 <br><br>
 
