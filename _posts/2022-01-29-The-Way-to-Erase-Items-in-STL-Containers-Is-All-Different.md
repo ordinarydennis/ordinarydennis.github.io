@@ -188,9 +188,6 @@ To summarize<br>
 	- If the container is memory contiguous container, Use erase-remove idiom.
 	- If the container is list, Use remove member function.
 	- If the container is associative container, Use erase member function.
-
-<br>
-
 2. If you want to erase all elements satisfying specific predicate :<br>
 	- If the container is memory contiguous container, Use erase-remove_if idiom.
 	- If the container is list, Use remove_if member function.
