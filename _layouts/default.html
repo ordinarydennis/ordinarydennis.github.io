@@ -15,19 +15,16 @@ layout: compress
 
 <html lang="{{ site.lang }}"{{ prefer_mode }}>
 
-  {% include head.html %}
-
-  {% unless site.theme_mode %}
-    {% include mode-toggle.html %}
-  {% endunless %}
-
   <head>
-    <meta charset="utf-8">
+    {% include head.html %}
+    {% unless site.theme_mode %}
+      {% include mode-toggle.html %}
+    {% endunless %}
     {% if page.use_math %}
     {% include mathjax_support.html %}
     {% endif %}
   </head>
-  
+
   <body data-spy="scroll" data-target="#toc" topbar-visible="true">
 
     {% include sidebar.html %}
