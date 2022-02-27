@@ -21,10 +21,13 @@ layout: compress
     {% include mode-toggle.html %}
   {% endunless %}
 
-  {% if page.use_math %}
-	{% include mathjax_support.html %}
-  {% endif %}
-
+  <head>
+    <meta charset="utf-8">
+    {% if page.use_math %}
+    {% include mathjax_support.html %}
+    {% endif %}
+  </head>
+  
   <body data-spy="scroll" data-target="#toc" topbar-visible="true">
 
     {% include sidebar.html %}
