@@ -4,6 +4,7 @@ author:
   name: Dennis
 categories: [Algorithm]
 tags: [Algorithm]
+use_math: true
 pin: true
 ---
 
