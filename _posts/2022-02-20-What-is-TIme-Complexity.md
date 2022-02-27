@@ -86,20 +86,12 @@ void insertionSort(std::vector<int>& list)
     }
 }
 ```
-The sum up to i (2)(3) can be expressed as the sum of arithmetic sequences.
 
 $$ \sum_{i=1}^{n-1}{i} = \frac{(n-1)(1+n-1)}{2} = \frac{n(n-1)}{2} $$
 
-So, When the data is sorted in reverse order(the worst case), the time complexity of insertion sort is as follows.
-
 $$ 2\times(n-1) + 2\times \frac{n(n-1)}{2} = n^2 + n - 2 = O(n^2) $$
 
-When all data is already sorted(the best case), In each loop, only list[a] > curNum (2) is checked and the loop is exited. This means that list[a] > curNumber is executed n - 1 times.
-So, The time complexity in the best case is as follows.
-
-$$ 
-3\times(n-1) = 3n -3 = O(n) 
-$$
+$$ 3\times(n-1) = 3n -3 = O(n) $$
 
 <br><br>
 
