@@ -20,6 +20,10 @@ layout: compress
   {% unless site.theme_mode %}
     {% include mode-toggle.html %}
   {% endunless %}
+  
+  {% if page.use_math %}
+    {% include mathjax_support.html %}
+  {% endif %}
 
   <body data-spy="scroll" data-target="#toc" topbar-visible="true">
 
@@ -53,8 +57,6 @@ layout: compress
     {% include search-loader.html %}
 
     {% include js-selector.html %}
-
-    {% include mathjax_support.html %}
 
   </body>
 
