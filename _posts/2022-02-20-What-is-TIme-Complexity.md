@@ -51,9 +51,17 @@ Time complexity can be expressed as the sum of operations. If the number of oper
 
 
 ## The Reason Why Only The Unknown and Exponential of The highest Order Term Are Leaved.
-Asymptotic notaion considers only the highest order terms excluding the insignificant terms to focus on the significant growth rate at runtime.
+Asymptotic notaion considers only the highest order terms excluding the insignificant terms to focus on the significant rate growth at runtime.<br>
+Rate growth: the rate growth of function depending on input data size.
+Assuming there is a function as follow :
+\[
+    x^2 + 10x + 20
+\]
 
+![quadratic_function_graph]({{site.url}}/assets/img/2022-02-20-What-is-TIme-Complexity/quadratic_function_graph.png){: width="300" height="300")<br><br><br><br><br><br><br>
 
+As x exceeds 12, the value of the 10x+20 expression is no longer meaningful.
+This is the reason why the highest order term, which has the greatest influence on the amount of the increase of a function depending on input value x, is used for the time complexity.
 <br><br>
 
 
@@ -107,8 +115,9 @@ So, The time complexity in the best case is as follows.
 
 
 ## Conclusion
-
-
+Today, we learned about time complexity.
+When designing and implementing algorithms, I think there is a difference between knowing how to calculate time complexity and not knowing it.
+Developers should always think about whether the time complexity of their algorithms is best.
 <br><br>
 
 ## References
