@@ -113,13 +113,94 @@ So, The time complexity in the best case is as follows.
 
 <br><br>
 
+## The Type of Big O Complexity
+Constant time $O(1)$ : <br>
+If the algorithm performs constant operation regardless of the input data,
+the time complexity is ``Constant time``. 
+```cpp
+void print()
+{
+    std::cout<<"Hello World!"<<std::endl;
+}
+```
+<br>
+
+Logarithmic time $O(LogN)$ : <br> 
+As the input data increases, If the number of operations increases in proportion to  $LogN$ ,  the time complexity is ``Logarithmic time``.
+```cpp
+bool BinarySearch(const std::vector<int>& v, int start, int end, int key)
+ {
+
+    if (start > end) return false;
+
+    int mid = (start + end) / 2;
+
+    if (v[mid] == key)
+    {   
+        return true;
+    }
+    else if (v[mid] > key)
+    {
+        return BinarySearch(v, start, mid - 1, key);
+    }
+    else 
+    {
+        return BinarySearch(v, mid + 1, end, key);
+    }
+}
+```
+<br>
+
+Linear time $O(N)$ : <br>
+As input data increases, if the number of operations increase in proportion to input data size, the time complexity is $O(n)$.
+```cpp
+bool find(std::vector<int> v, int n)
+{
+    for(const auto e : v)
+    {
+        if(n == e)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+```
+<br>
+
+Quadratic time $O(N^2)$  : <br> 
+As input data increases, if the number of operations increase in proportion to square of the number of input data, the time complexity is ``Quadratic time($O(n)$)``.
+```cpp
+void SelectionSort(std::vector<int>& v)
+{
+    for (int a = 0; a < v.size(); a++)
+    {
+        for (int b = a + 1; b < v.size(); b++)
+        {
+            if (v[a] > v[b])
+            {
+                int temp = v[a];
+                v[a] = v[b];
+                v[b] = temp;
+            }
+        }
+    }
+}
+```
+
+<br>
+
+![time_complexity_chart]({{site.url}}/assets/img/2022-02-20-What-is-TIme-Complexity/time_complexity_chart.png)<br><br><br>
+
 
 ## Conclusion
-Today, we learned about time complexity.
-When designing and implementing algorithms, I think there is a difference between knowing how to calculate time complexity and not knowing it.
-Developers should always think about whether the time complexity of their algorithms is best.
+Today, We learned about the time complexity.
+When designing and implementing algorithms, I think there is a difference between knowing how to calculate the time complexity and not knowing it.
+Developers should always consider whether the time complexity of the algorithm they wrote is best  
+
 <br><br>
 
 ## References
 [Time Complexity, Space Complexity](https://yoongrammer.tistory.com/79)
 [Asymtotic notation](https://www.tutorialspoint.com/data_structures_algorithms/asymptotic_analysis.htm)
+[Logarithmic Time Complexity](https://www.bigocheatsheet.com/)
