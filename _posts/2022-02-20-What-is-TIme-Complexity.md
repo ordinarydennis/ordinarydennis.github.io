@@ -58,7 +58,7 @@ Assuming there is a function as follow :
     x^2 + 10x + 20
 \]
 
-![quadratic_function_graph]({{site.url}}/assets/img/2022-02-20-What-is-TIme-Complexity/quadratic_function_graph.png)<br><br><br>
+![quadratic_function_graph]({{site.url}}/assets/img/2022-02-20-What-is-TIme-Complexity/quadratic_function_graph.png)
 
 As x exceeds 12, the value of the 10x+20 expression is no longer meaningful.
 This is the reason why the highest order term, which has the greatest influence on the amount of the increase of a function depending on input value x, is used for the time complexity.
@@ -113,7 +113,7 @@ So, The time complexity in the best case is as follows.
 
 <br><br>
 
-## The Type of Big O Complexity
+## The Type of Big O Time Complexity
 Constant time $O(1)$ : <br>
 If the algorithm performs constant operation regardless of the input data,
 the time complexity is ``Constant time``. 
@@ -130,7 +130,6 @@ As the input data increases, If the number of operations increases in proportion
 ```cpp
 bool BinarySearch(const std::vector<int>& v, int start, int end, int key)
  {
-
     if (start > end) return false;
 
     int mid = (start + end) / 2;
@@ -152,7 +151,7 @@ bool BinarySearch(const std::vector<int>& v, int start, int end, int key)
 <br>
 
 Linear time $O(N)$ : <br>
-As input data increases, if the number of operations increase in proportion to input data size, the time complexity is $O(n)$.
+As input data increases, if the number of operations increase in proportion to input data size, the time complexity is ``Linear time``.
 ```cpp
 bool find(std::vector<int> v, int n)
 {
@@ -169,7 +168,7 @@ bool find(std::vector<int> v, int n)
 <br>
 
 Quadratic time $O(N^2)$  : <br> 
-As input data increases, if the number of operations increase in proportion to square of the number of input data, the time complexity is ``Quadratic time($O(n)$)``.
+As input data increases, if the number of operations increase in proportion to square of the number of input data, the time complexity is ``Quadratic time``.
 ```cpp
 void SelectionSort(std::vector<int>& v)
 {
@@ -188,8 +187,28 @@ void SelectionSort(std::vector<int>& v)
 }
 ```
 
+Exponential time $O(2^N)$  : <br> 
+As input data increases, if the number of operations increase in proportion to $2^N$ of the number of input data, the time complexity is ``Exponential time``.
+```cpp
+int Fibonacci(int num)
+{
+    if(num == 0) 
+    {
+        return 0;
+    }
+    else if(num == 1)
+    {
+        return 1;
+    }
+    else 
+    {
+        return Fibonacci(num - 1) + Fibonacci(num - 2);
+    }
+}
+```
 <br>
 
+The following shows the amount of change in the function according to the type of time Big O time complexity.
 ![time_complexity_chart]({{site.url}}/assets/img/2022-02-20-What-is-TIme-Complexity/time_complexity_chart.png)<br><br><br>
 
 
