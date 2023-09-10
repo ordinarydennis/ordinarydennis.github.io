@@ -7,6 +7,6 @@ tags: [Blogging]
 pin: true
 ---
 
-## Introduction
+<h2>Introduction</h2>
 As I started the github blog again, I would like to share the difficulties that I faced while setting up my blog.
 Among many [jekyll themes](https://jekyll-themes.com/free/), I like [Chirpy](https://jekyll-themes.com/chirpy/) theme the most and I chose this them this time. 
