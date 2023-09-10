@@ -31,7 +31,8 @@ for (auto it = v.begin(); it != v.end(); it++)
 ```
 Will the code above work well? if you look at the code simply, it seems to be no problem.
 however the iterator is invalidated in above code while traversing the container. Above code causes indeterminate behavior due to invalidating iterator while traversing the container.
-![vector_iterator_invalidation]({{site.url}}\assets\img\2023-09-10-Be-careful-Try-Not-to-Use-Invalidated-Iterator/vector_iterator_invalidation.png)
+![vector_iterator_invalidation]({{site.url}}/assets/img/2023-09-10-Be-careful-Try-Not-to-Use-Invalidated-Iterator/vector_iterator_invalidation.png)
+
 When an element is 5, 100 is added to the vector. At this time, memory reallocation occurs while exceeding the vector's maximum capacity. Allocate memory to a location that is completely different from the original location and move all existing elements to a new space. but the iterator still point to old memory location.<br>
 As a result, the iterator performs numerous iterations to reach at the v.end(). If you add or delete elements while traversing the container, you may use an invalidated iterator, you must be careful this.<br><br>
 As we saw in the above case. If you add elements to a vector when there is no free space, the memory of vector is reallocated and iterator is invalidated. What if the vector has enough capacity?<br>
@@ -57,7 +58,7 @@ for (auto it = v.begin(); it != v.end(); it++)
 	}
 }
 ```
-![vector_iterator_validation]({{site.url}}\assets\img\2023-09-10-Be-careful-Try-Not-to-Use-Invalidated-Iterator/vector_iterator_validation.png){: width="400" height="400"){: .left}<br><br><br><br>
+![vector_iterator_validation]({{site.url}}/assets/img/2023-09-10-Be-careful-Try-Not-to-Use-Invalidated-Iterator/vector_iterator_validation.png){: width="400" height="400"){: .left}<br><br><br><br>
 <br><br>
 
 <h2>In Case of Add Element at The Middle of Vector When Vector Has Enough Space.</h2>
@@ -79,4 +80,4 @@ for (; it != vec.end(); ++it)
 	}
 }
 ```
-![vector_add_at_the_middle]({{site.url}}\assets\img\2023-09-10-Be-careful-Try-Not-to-Use-Invalidated-Iterator/vector_add_at_the_middle.png){: width="700" height="600"){: .left}<br><br><br><br>
+![vector_add_at_the_middle]({{site.url}}/assets/img/2023-09-10-Be-careful-Try-Not-to-Use-Invalidated-Iterator/vector_add_at_the_middle.png){: width="700" height="600"){: .left}<br><br><br><br>
