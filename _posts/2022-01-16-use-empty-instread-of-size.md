@@ -35,7 +35,7 @@ Also the code using empty() is easy to understand than size() because it is simp
 Finally, the biggest advantage of using empty() is that it is easy to type.
 <br><br>
 
-<h2>2. empty() is More Faster than size()</h2> 
+<h2>2. empty() is More Faster than size().</h2> 
 empty() is implemented as an inline function. also empty() is a constant-time operation for all standard cotainers.
 whereas some implementations of size() is O(n) time complexity such as list::size().
 The reason that list::size() has linear time is bacause list container offer splice().
