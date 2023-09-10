@@ -1,5 +1,5 @@
 ---
-title: What Is Time Complextiy.
+title: What is Time Complextiy
 author:
   name: Dennis
 categories: [Algorithm]
