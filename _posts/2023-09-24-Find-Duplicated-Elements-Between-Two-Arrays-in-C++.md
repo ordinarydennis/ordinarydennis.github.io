@@ -8,8 +8,8 @@ pin: true
 use_math: true
 ---
 
-Recently, there was a case of a bug while running a program using Someday I was wondering how to get elements which is duplicated between two arrays. So, Today I am gonna talk to you about this. Let’s see code below
-<br><br>
+Someday I was wondering how to get elements which is duplicated between two arrays. So, Today I am gonna talk to you about this. Let’s see code below
+<br>
 
 
 <h2>Approach 1: Brute Force</h2>
@@ -148,7 +148,7 @@ Third approach time complexity is O(n log n + m log m) and There is no space com
 2. We used sort function 2 times to arr1 and arr2.
 
 This solution do not use extra space but it is not appropriate in case that the array to need to sort.
-
+<br><br>
 
 <h2> Conclusion </h2>
 The Second approach affects memory usage because it uses additional memory to create unordered_set. On the other hand, The Third approach uses less memory because it uses sorting, but the two arrays need to be sorted, which can lead to greater time complexity if the array is larger.
