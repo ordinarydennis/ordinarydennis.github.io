@@ -18,7 +18,7 @@ We usually call the function to process our specific request. At that time, the 
 
 <h2>Why a Socket is Blocked?</h2>
 
-![blockin_io_model]({{site.url}}/assets/img/2023-Blocking-and-Non-Blocking-Socket/blockin_io_model.png){: width="600" height="600"){: .center}
+![blockin_io_model]({{site.url}}/assets/img/2023-10-08-Blocking-and-Non-Blocking-Socket/blockin_io_model.png){: width="600" height="600"){: .center}
 
 <i>http://www.masterraghu.com/subjects/np/introduction/unix_network_programming_v1.3/ch06lev1sec2.html</i>
 
@@ -134,7 +134,7 @@ Because the socket is in non- blocking mode, it can output the size of packets r
 <h2> Non-Blocking Socket(Sending packet) </h2>
 When does the send() function become blocking? To understand this, you need to know first how the send() function is processed internally when sending data with block mode socket.
 
-![An_established_TCP_connection]({{site.url}}/assets/img/2023-Blocking-and-Non-Blocking-Socket/An-established-TCP-connection.png){: width="500" height="500"){: .center}
+![An_established_TCP_connection]({{site.url}}/assets/img/2023-10-08-Blocking-and-Non-Blocking-Socket/An-established-TCP-connection.png){: width="500" height="500"){: .center}
 
 <i>https://www.researchgate.net/figure/An-established-TCP-connection_fig1_220926307</i>
 
