@@ -1,5 +1,5 @@
 ---
-title: A Deep Dive into constexpr(2/2)
+title: A Deep Dive into C++ constexpr(2/2)
 author:
   name: Dennis
 categories: [C++]

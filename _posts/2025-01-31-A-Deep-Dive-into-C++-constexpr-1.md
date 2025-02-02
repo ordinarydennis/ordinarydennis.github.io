@@ -1,5 +1,5 @@
 ---
-title: A Deep Dive into constexpr(1/2)
+title: A Deep Dive into C++ constexpr(1/2)
 author:
   name: Dennis
 categories: [C++]
@@ -355,7 +355,7 @@ Here, y is declared as const and initialized with 5 + 3. This initialization can
 <br><br>
 
 
-[A Deep Dive into constexpr(2/2)]({{ "/posts/A-Deep-Dive-into-constexpr-2/" | relative_url }})
+[A Deep Dive into constexpr(2/2)]({{ "/posts/A-Deep-Dive-into-C++-constexpr-2/" | relative_url }})
 
 <br>
 
