@@ -1,0 +1,337 @@
+<!DOCTYPE html><html lang="en" ><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><meta name="day-prompt" content="days ago"><meta name="hour-prompt" content="hours ago"><meta name="minute-prompt" content="minutes ago"><meta name="justnow-prompt" content="just now"><meta name="generator" content="Jekyll v4.3.2" /><meta property="og:title" content="A Deep Dive into C++ constexpr(1/2)" /><meta name="author" content="Dennis" /><meta property="og:locale" content="en" /><meta name="description" content="As you develop software, you may often come across the const and constexpr keywords. At first glance, both seem to represent “constants,” but in reality, their subtle differences can significantly impact code performance and execution. “Why should I use constexpr?”, “Isn’t const sufficient everywhere?” If you’ve ever had these questions, this article is for you. Today, we’ll dive deep into the core concepts of constexpr, explore its practical applications, and illustrate its power with engaging examples." /><meta property="og:description" content="As you develop software, you may often come across the const and constexpr keywords. At first glance, both seem to represent “constants,” but in reality, their subtle differences can significantly impact code performance and execution. “Why should I use constexpr?”, “Isn’t const sufficient everywhere?” If you’ve ever had these questions, this article is for you. Today, we’ll dive deep into the core concepts of constexpr, explore its practical applications, and illustrate its power with engaging examples." /><link rel="canonical" href="/posts/A-Deep-Dive-into-C++-constexpr-1/" /><meta property="og:url" content="/posts/A-Deep-Dive-into-C++-constexpr-1/" /><meta property="og:site_name" content="OrdinaryDennis" /><meta property="og:type" content="article" /><meta property="article:published_time" content="2025-01-31T00:00:00+09:00" /><meta name="twitter:card" content="summary" /><meta property="twitter:title" content="A Deep Dive into C++ constexpr(1/2)" /><meta name="google-site-verification" content="google_meta_tag_verification" /> <script type="application/ld+json"> {"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Dennis"},"dateModified":"2025-01-31T00:00:00+09:00","datePublished":"2025-01-31T00:00:00+09:00","description":"As you develop software, you may often come across the const and constexpr keywords. At first glance, both seem to represent “constants,” but in reality, their subtle differences can significantly impact code performance and execution. “Why should I use constexpr?”, “Isn’t const sufficient everywhere?” If you’ve ever had these questions, this article is for you. Today, we’ll dive deep into the core concepts of constexpr, explore its practical applications, and illustrate its power with engaging examples.","headline":"A Deep Dive into C++ constexpr(1/2)","mainEntityOfPage":{"@type":"WebPage","@id":"/posts/A-Deep-Dive-into-C++-constexpr-1/"},"url":"/posts/A-Deep-Dive-into-C++-constexpr-1/"}</script><title>A Deep Dive into C++ constexpr(1/2) | OrdinaryDennis</title><link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicons/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16x16.png"><link rel="manifest" href="/assets/img/favicons/site.webmanifest"><link rel="shortcut icon" href="/assets/img/favicons/favicon.ico"><meta name="apple-mobile-web-app-title" content="OrdinaryDennis"><meta name="application-name" content="OrdinaryDennis"><meta name="msapplication-TileColor" content="#da532c"><meta name="msapplication-config" content="/assets/img/favicons/browserconfig.xml"><meta name="theme-color" content="#ffffff"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://fonts.gstatic.com"><link rel="preconnect" href="https://www.google-analytics.com" crossorigin="use-credentials"><link rel="dns-prefetch" href="https://www.google-analytics.com"><link rel="preconnect" href="https://www.googletagmanager.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://cdn.jsdelivr.net"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.11.2/css/all.min.css"><link rel="stylesheet" href="/assets/css/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@1.0.1/dist/bootstrap-toc.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/magnific-popup@1.1.0/dist/magnific-popup.min.css"> <script src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script> <script type="text/javascript"> class ModeToggle { static get MODE_KEY() { return "mode"; } static get DARK_MODE() { return "dark"; } static get LIGHT_MODE() { return "light"; } static get ID() { return "mode-toggle"; } constructor() { if (this.hasMode) { if (this.isDarkMode) { if (!this.isSysDarkPrefer) { this.setDark(); } } else { if (this.isSysDarkPrefer) { this.setLight(); } } } let self = this; /* always follow the system prefers */ this.sysDarkPrefers.addEventListener("change", () => { if (self.hasMode) { if (self.isDarkMode) { if (!self.isSysDarkPrefer) { self.setDark(); } } else { if (self.isSysDarkPrefer) { self.setLight(); } } self.clearMode(); } self.notify(); }); } /* constructor() */ get sysDarkPrefers() { return window.matchMedia("(prefers-color-scheme: dark)"); } get isSysDarkPrefer() { return this.sysDarkPrefers.matches; } get isDarkMode() { return this.mode === ModeToggle.DARK_MODE; } get isLightMode() { return this.mode === ModeToggle.LIGHT_MODE; } get hasMode() { return this.mode != null; } get mode() { return sessionStorage.getItem(ModeToggle.MODE_KEY); } /* get the current mode on screen */ get modeStatus() { if (this.isDarkMode || (!this.hasMode && this.isSysDarkPrefer)) { return ModeToggle.DARK_MODE; } else { return ModeToggle.LIGHT_MODE; } } setDark() { $('html').attr(ModeToggle.MODE_KEY, ModeToggle.DARK_MODE); sessionStorage.setItem(ModeToggle.MODE_KEY, ModeToggle.DARK_MODE); } setLight() { $('html').attr(ModeToggle.MODE_KEY, ModeToggle.LIGHT_MODE); sessionStorage.setItem(ModeToggle.MODE_KEY, ModeToggle.LIGHT_MODE); } clearMode() { $('html').removeAttr(ModeToggle.MODE_KEY); sessionStorage.removeItem(ModeToggle.MODE_KEY); } /* Notify another plugins that the theme mode has changed */ notify() { window.postMessage({ direction: ModeToggle.ID, message: this.modeStatus }, "*"); } } /* ModeToggle */ const toggle = new ModeToggle(); function flipMode() { if (toggle.hasMode) { if (toggle.isSysDarkPrefer) { if (toggle.isLightMode) { toggle.clearMode(); } else { toggle.setLight(); } } else { if (toggle.isDarkMode) { toggle.clearMode(); } else { toggle.setDark(); } } } else { if (toggle.isSysDarkPrefer) { toggle.setLight(); } else { toggle.setDark(); } } toggle.notify(); } /* flipMode() */ </script> <script type="text/x-mathjax-config"> MathJax.Hub.Config({ TeX: { equationNumbers: { autoNumber: "AMS" } }, tex2jax: { inlineMath: [ ['$','$'] ], displayMath: [ ['$$','$$'], ["\[","\]"] ], processEscapes: true } }); </script> <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"> </script><body data-spy="scroll" data-target="#toc" topbar-visible="true"><div id="sidebar" class="d-flex flex-column align-items-end" lang="en"><div class="profile-wrapper text-center"><div id="avatar"> <a href="/" alt="avatar" class="mx-auto"> <img src="/assets/img/favicons/avatar.jpg" alt="avatar" onerror="this.style.display='none'"> </a></div><div class="site-title mt-3"> <a href="/">OrdinaryDennis</a></div><div class="site-subtitle font-italic">Persistence rather than Excellence</div></div><ul class="w-100"><li class="nav-item"> <a href="/" class="nav-link"> <i class="fa-fw fas fa-home ml-xl-3 mr-xl-3 unloaded"></i> <span>HOME</span> </a><li class="nav-item"> <a href="/categories/" class="nav-link"> <i class="fa-fw fas fa-stream ml-xl-3 mr-xl-3 unloaded"></i> <span>CATEGORIES</span> </a><li class="nav-item"> <a href="/tags/" class="nav-link"> <i class="fa-fw fas fa-tag ml-xl-3 mr-xl-3 unloaded"></i> <span>TAGS</span> </a><li class="nav-item"> <a href="/archives/" class="nav-link"> <i class="fa-fw fas fa-archive ml-xl-3 mr-xl-3 unloaded"></i> <span>ARCHIVES</span> </a><li class="nav-item"> <a href="/about/" class="nav-link"> <i class="fa-fw fas fa-info-circle ml-xl-3 mr-xl-3 unloaded"></i> <span>ABOUT</span> </a></ul><div class="sidebar-bottom mt-auto d-flex flex-wrap justify-content-center align-items-center"> <button class="mode-toggle btn" aria-label="Switch Mode"> <i class="fas fa-adjust"></i> </button> <span class="icon-border"></span> <a href="https://github.com/ordinarydennis" aria-label="github" target="_blank" rel="noopener"> <i class="fab fa-github"></i> </a> <a href=" javascript:location.href = 'mailto:' + ['ordinarydennis','gmail.com'].join('@')" aria-label="email" > <i class="fas fa-envelope"></i> </a> <a href="/feed.xml" aria-label="rss" > <i class="fas fa-rss"></i> </a></div></div><div id="topbar-wrapper" class="row justify-content-center"><div id="topbar" class="col-11 d-flex h-100 align-items-center justify-content-between"> <span id="breadcrumb"> <span> <a href="/"> Home </a> </span> <span>A Deep Dive into C++ constexpr(1/2)</span> </span> <i id="sidebar-trigger" class="fas fa-bars fa-fw"></i><div id="topbar-title"> Post</div><i id="search-trigger" class="fas fa-search fa-fw"></i> <span id="search-wrapper" class="align-items-center"> <i class="fas fa-search fa-fw"></i> <input class="form-control" id="search-input" type="search" aria-label="search" autocomplete="off" placeholder="Search..."> <i class="fa fa-times-circle fa-fw" id="search-cleaner"></i> </span> <span id="search-cancel" >Cancel</span></div></div><div id="main-wrapper"><div id="main"><div class="row"><div id="core-wrapper" class="col-12 col-lg-11 col-xl-8"><div class="post pl-1 pr-1 pl-sm-2 pr-sm-2 pl-md-4 pr-md-4"><h1 data-toc-skip>A Deep Dive into C++ constexpr(1/2)</h1><div class="post-meta text-muted"><div> By <em> Dennis </em></div><div class="d-flex"><div> <span> Posted <em class="timeago" date="2025-01-31 00:00:00 +0900" data-toggle="tooltip" data-placement="bottom" title="Fri, Jan 31, 2025, 12:00 AM +0900" >Jan 31</em> </span> <span class="readtime" data-toggle="tooltip" data-placement="bottom" title="2222 words"> <em>12 min</em> read</span></div></div></div><div class="post-content"><p>As you develop software, you may often come across the <code class="language-plaintext highlighter-rouge">const</code> and <code class="language-plaintext highlighter-rouge">constexpr</code> keywords. At first glance, both seem to represent “constants,” but in reality, their subtle differences can significantly impact code performance and execution. “Why should I use <code class="language-plaintext highlighter-rouge">constexpr</code>?”, “Isn’t <code class="language-plaintext highlighter-rouge">const</code> sufficient everywhere?” If you’ve ever had these questions, this article is for you. Today, we’ll dive deep into the core concepts of <code class="language-plaintext highlighter-rouge">constexpr</code>, explore its practical applications, and illustrate its power with engaging examples.</p><h1> const</h1><p>First, let’s take a brief look at const. As developers, we often need variables that do not change.</p><div class="language-cpp highlighter-rouge"><div class="code-header"> <span label-text="Cpp"><i class="fas fa-code small"></i></span> <button aria-label="copy" title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+</pre><td class="rouge-code"><pre><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp">
+</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+	<span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">programVersion</span> <span class="o">=</span> <span class="s">"1.0.0"</span><span class="p">;</span>
+
+	<span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">userName</span><span class="p">;</span>
+	<span class="n">std</span><span class="o">::</span><span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">userName</span><span class="p">;</span>
+
+	<span class="c1">//...some source code</span>
+	
+	<span class="c1">//This is coding mistake, original intention is </span>
+	<span class="c1">//std::string programUserName = userName;</span>
+	<span class="n">programVersion</span> <span class="o">=</span> <span class="n">userName</span><span class="p">;</span>
+
+	<span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">programVersion</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span> <span class="c1">//output wrong information </span>
+
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+</pre></table></code></div></div><p>Program version information should not change while the program is running. Imagine accidentally storing a user-inputted name in the program version variable. In this case, the version information could become corrupted. This is a more common mistake than you might think.</p><p>The solution is simple. Just change the programVersion variable to a constant.</p><div class="language-cpp highlighter-rouge"><div class="code-header"> <span label-text="Cpp"><i class="fas fa-code small"></i></span> <button aria-label="copy" title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre><td class="rouge-code"><pre><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">programVersion</span> <span class="o">=</span> <span class="s">"1.0.0"</span><span class="p">;</span>
+
+<span class="p">...</span>
+<span class="n">programVersion</span> <span class="o">=</span> <span class="n">userName</span><span class="p">;</span> <span class="c1">// The error occures bacause programVersion is const variable.</span>
+<span class="p">...</span>
+
+</pre></table></code></div></div><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span label-text="Plaintext"><i class="fas fa-code small"></i></span> <button aria-label="copy" title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre>Error C2678 binary '=': no operator found which takes a left-hand operand of type 'const std::string' (or there is no acceptable conversion)
+</pre></table></code></div></div><p>Since a constant cannot be modified, an error message like the one above will appear if you attempt to change it.</p><p><br /></p><h1>constexpr</h1><p>Now that we have briefly covered the <code class="language-plaintext highlighter-rouge">const</code> keyword, let’s dive into the <code class="language-plaintext highlighter-rouge">constexpr</code> keyword in detail. The constexpr specifier declares that it is possible to evaluate the value of the entities at compile time. Such entities can then be used where only compile time constant expressions are allowed (provided that appropriate function arguments are given).</p><h2> constexpr as a constant</h2><p>A constexpr specifier used in an object declaration or non-static member function(until C++14) implies const.</p><div class="language-cpp highlighter-rouge"><div class="code-header"> <span label-text="Cpp"><i class="fas fa-code small"></i></span> <button aria-label="copy" title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+</pre><td class="rouge-code"><pre><span class="k">class</span> <span class="nc">Point</span>
+<span class="p">{</span>
+<span class="nl">public:</span>
+    <span class="k">constexpr</span> <span class="n">Point</span><span class="p">(</span><span class="kt">double</span> <span class="n">x</span><span class="p">,</span> <span class="kt">double</span> <span class="n">y</span><span class="p">)</span> <span class="o">:</span> <span class="n">x_</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">y_</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="p">{}</span>
+
+    <span class="k">constexpr</span> <span class="kt">double</span> <span class="n">getX</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">x_</span><span class="p">;</span> <span class="p">}</span> <span class="c1">// implies const in C++11, C++14</span>
+    <span class="k">constexpr</span> <span class="kt">double</span> <span class="n">getY</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">y_</span><span class="p">;</span> <span class="p">}</span> <span class="c1">// implies const in C++11, C++14</span>
+
+<span class="k">private</span><span class="o">:</span>
+    <span class="kt">double</span> <span class="n">x_</span><span class="p">;</span>
+    <span class="kt">double</span> <span class="n">y_</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="k">constexpr</span> <span class="n">Point</span> <span class="nf">p</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">);</span>
+</pre></table></code></div></div><p>Before C++14, constexpr enforced that objects and non-static member functions had const characteristics. This ensured that the function or object remained unchanged throughout the program’s execution. <em>After C++14, constexpr functions gained more flexibility, but the fundamental concept related to const remains the same.</em></p><h2> constexpr as a inline</h2><p>A constexpr specifier used in the first declaration of a function or static data member(since C++17) <strong>implies inline</strong>. If any declaration of a function or function template has a constexpr specifier, then every declaration must contain that specifier.</p><div class="language-cpp highlighter-rouge"><div class="code-header"> <span label-text="Cpp"><i class="fas fa-code small"></i></span> <button aria-label="copy" title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre><td class="rouge-code"><pre><span class="k">class</span> <span class="nc">MathConstants</span>
+<span class="p">{</span>
+<span class="nl">public:</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="kt">double</span> <span class="n">PI</span> <span class="o">=</span> <span class="mf">3.14159</span><span class="p">;</span> <span class="c1">// implies inline</span>
+<span class="p">};</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">double</span> <span class="n">circleArea</span> <span class="o">=</span> <span class="n">MathConstants</span><span class="o">::</span><span class="n">PI</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">*</span> <span class="mi">10</span><span class="p">;</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p>In the example above, the declaration of static constexpr double PI = 3.14159; in the MathConstants class ensures that PI is a static data member initialized at compile time. <em>Since constexpr implies inline starting from C++17, PI is accessible across different translation units</em>. This means that the constant can be used in any file within the program. (One of the primary purposes of the inline specifier in C++ is to resolve the issue of multiple definitions of the same function or variable across different translation units. This helps prevent linker errors and improves code reusability.)</p><div class="language-cpp highlighter-rouge"><div class="code-header"> <span label-text="Cpp"><i class="fas fa-code small"></i></span> <button aria-label="copy" title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+</pre><td class="rouge-code"><pre><span class="k">struct</span> <span class="nc">Calculator</span>
+<span class="p">{</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="kt">int</span> <span class="n">add</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="n">Calculator</span><span class="o">::</span><span class="n">add</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span> <span class="c1">// This function call can be evaluated at compile time.</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p>In this case, the add function of the Calculator struct is declared as static constexpr, allowing it to be evaluated at compile time. Additionally, since C++17, constexpr functions are automatically treated as inline, meaning this function can also be accessed across different translation units. By being inlined, the function call is replaced with the actual code, reducing execution time.</p><p><br /></p><h1> constexpr variable</h1><p>A <code class="language-plaintext highlighter-rouge">constexpr</code> variable in C++ is used to declare a variable whose value is determined at compile time and can be used as a constant throughout the program.</p><p><strong>The variable of a primitive type.</strong></p><div class="language-cpp highlighter-rouge"><div class="code-header"> <span label-text="Cpp"><i class="fas fa-code small"></i></span> <button aria-label="copy" title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre><td class="rouge-code"><pre><span class="k">constexpr</span> <span class="kt">int</span> <span class="n">max_size</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>  <span class="c1">// constexpr variable of primitive type</span>
+<span class="k">constexpr</span> <span class="kt">double</span> <span class="n">pi</span> <span class="o">=</span> <span class="mf">3.14159</span><span class="p">;</span> <span class="c1">// constexpr variable of primitive type</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">myArray</span><span class="p">[</span><span class="n">max_size</span><span class="p">];</span>  <span class="c1">// An array whose size is determined at compile time</span>
+    <span class="kt">double</span> <span class="n">circumference</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">pi</span> <span class="o">*</span> <span class="mi">10</span><span class="p">;</span> <span class="c1">// An expression that can be evaluated at compile time</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p>In this example, max_size and pi are determined at compile time and remain constant throughout the program’s execution. The size of myArray is also determined at compile time using max_size.</p><p><strong>The variable of a class type.</strong></p><div class="language-cpp highlighter-rouge"><div class="code-header"> <span label-text="Cpp"><i class="fas fa-code small"></i></span> <button aria-label="copy" title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+</pre><td class="rouge-code"><pre><span class="k">class</span> <span class="nc">Point</span> 
+<span class="p">{</span>
+<span class="nl">public:</span>
+    <span class="k">constexpr</span> <span class="n">Point</span><span class="p">(</span><span class="kt">double</span> <span class="n">x</span><span class="p">,</span> <span class="kt">double</span> <span class="n">y</span><span class="p">)</span> <span class="o">:</span> <span class="n">x_</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">y_</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="p">{}</span>
+    <span class="k">constexpr</span> <span class="kt">double</span> <span class="n">getX</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">x_</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">constexpr</span> <span class="kt">double</span> <span class="n">getY</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">y_</span><span class="p">;</span> <span class="p">}</span>
+
+<span class="k">private</span><span class="o">:</span>
+    <span class="kt">double</span> <span class="n">x_</span><span class="p">;</span>
+    <span class="kt">double</span> <span class="n">y_</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="k">constexpr</span> <span class="n">Point</span> <span class="nf">origin</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">);</span> <span class="c1">// constexpr variable of classtype</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">double</span> <span class="n">x</span> <span class="o">=</span> <span class="n">origin</span><span class="p">.</span><span class="n">getX</span><span class="p">();</span> <span class="c1">// can be evaluated at compile time</span>
+    <span class="kt">double</span> <span class="n">y</span> <span class="o">=</span> <span class="n">origin</span><span class="p">.</span><span class="n">getY</span><span class="p">();</span> <span class="c1">// can be evaluated at compile time</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p>The <code class="language-plaintext highlighter-rouge">Point</code> class has a <code class="language-plaintext highlighter-rouge">constexpr</code> constructor, and the origin object is initialized at compile time. The member functions <code class="language-plaintext highlighter-rouge">getX()</code> and <code class="language-plaintext highlighter-rouge">getY()</code> of origin are also declared as <code class="language-plaintext highlighter-rouge">constexpr</code>, allowing their values to be retrieved at compile time.</p><h2> Rules for constexpr Variables</h2><p><em><code class="language-plaintext highlighter-rouge">constexpr</code> variables are useful for storing values that need to be computed at compile time to optimize program performance.</em> This helps minimize execution time and memory usage by performing complex calculations at compile time, reducing runtime overhead. A variable can be declared as constexpr if it meets the following conditions.</p><ul><li>The declaration is a <a href="https://en.cppreference.com/w/cpp/language/definition">definition</a>.<li>It is of a <a href="https://en.cppreference.com/w/cpp/language/constant_expression#Literal_type">literal type</a>.<li>It is initialized (by the declaration).<li>The full-expression of its initialization is a constant expression. (until C++26)<li>It is <a href="https://en.cppreference.com/w/cpp/language/constant_expression#Constant-initialized_entities">constant-initializable</a>. (since C++26)<li>It has constant destruction, which means one of the following conditions needs to be satisfied: (since C++20)<ul><li>It is not of class type nor (possibly multi-dimensional) array thereof<li>It is of a class type with a constexpr destructor or (possibly multi-dimensional) array thereof, and for a hypothetical expression e whose only effect is to destroy the object, e would be a <a href="https://en.cppreference.com/w/cpp/language/constant_expression#Core_constant_expression">core constant expression</a> if the lifetime of the object and its non-mutable subobjects (but not its mutable subobjects) were considered to start within e.</ul></ul><p>If a constexpr variable is not <a href="https://en.cppreference.com/w/cpp/language/tu_local">translation-unit-local</a>, it should not be initialized to refer to a translation-unit-local entity that is usable in constant expressions, nor have a subobject that refers to such an entity. Such initialization is disallowed in a <a href="https://en.cppreference.com/w/cpp/language/modules">module interface unit</a> (outside its <a href="https://en.cppreference.com/w/cpp/language/modules#Private_module_fragment">private module fragment</a>, if any) or a module partition, and is deprecated in any other context.</p><h3> 1. The declaration is a definition.</h3><p>To use the <code class="language-plaintext highlighter-rouge">constexpr</code> specifier, the declaration and definition must be done simultaneously.</p><div class="language-cpp highlighter-rouge"><div class="code-header"> <span label-text="Cpp"><i class="fas fa-code small"></i></span> <button aria-label="copy" title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="k">constexpr</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">programVersion</span> <span class="o">=</span> <span class="s">"1.0.0"</span><span class="p">;</span>
+</pre></table></code></div></div><h3> 2. It is of a literal type.</h3><p>In C++, a literal type refers to a type whose value can be determined at compile time. Since these types must be initialized and used at compile time, they need to satisfy certain conditions. <a href="https://en.cppreference.com/w/cpp/language/constant_expression#Literal_type">constant_expression - cppreference</a></p><p><strong>Primitive Types</strong>: Most primitive data types are literal types. For example, int, char, float, double, and bool are all considered literal types. These types can be used as constants at compile time. <code class="language-plaintext highlighter-rouge">cpp // constexpr for primitive type constexpr int n = 1; constexpr char c = 'A'; constexpr float f = 1.0f; constexpr double d = 10.0; </code> <strong>Literal Type Structures and Classes:</strong> For a structure or class to be considered a literal type, it must satisfy the following conditions:</p><ul><li>All data members must be <strong>literal types</strong>.<li>The class must have at least one <strong><code class="language-plaintext highlighter-rouge">constexpr</code> constructor</strong>, which must be usable for object initialization.<li>It must have a <strong>non-virtual destructor</strong>.<li>It must not contain a <strong>non-literal base class</strong> or <strong>virtual functions</strong><div class="language-cpp highlighter-rouge"><div class="code-header"> <span label-text="Cpp"><i class="fas fa-code small"></i></span> <button aria-label="copy" title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+</pre><td class="rouge-code"><pre><span class="c1">// A literal class</span>
+<span class="k">class</span> <span class="nc">conststr</span>
+<span class="p">{</span>
+    <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">p</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">sz</span><span class="p">;</span>
+<span class="nl">public:</span>
+    <span class="k">template</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">N</span><span class="p">&gt;</span>
+    <span class="k">constexpr</span> <span class="n">conststr</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="p">(</span><span class="o">&amp;</span><span class="n">a</span><span class="p">)[</span><span class="n">N</span><span class="p">])</span><span class="o">:</span> <span class="n">p</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="n">sz</span><span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{}</span>
+    <span class="o">~</span> <span class="n">conststr</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>  <span class="c1">//</span>
+
+    <span class="c1">// constexpr functions signal errors by throwing exceptions</span>
+    <span class="c1">// in C++11, they must do so from the conditional operator ?:</span>
+    <span class="k">constexpr</span> <span class="kt">char</span> <span class="k">operator</span><span class="p">[](</span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">n</span><span class="p">)</span> <span class="k">const</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="n">sz</span> <span class="o">?</span> <span class="n">p</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">:</span> <span class="k">throw</span> <span class="n">std</span><span class="o">::</span><span class="n">out_of_range</span><span class="p">(</span><span class="s">""</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">constexpr</span> <span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">size</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">sz</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">};</span>
+</pre></table></code></div></div></ul><p><strong>Enumeration Types</strong>: All enumeration types (enum) are also literal types.</p><div class="language-cpp highlighter-rouge"><div class="code-header"> <span label-text="Cpp"><i class="fas fa-code small"></i></span> <button aria-label="copy" title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre><td class="rouge-code"><pre><span class="k">enum</span> <span class="n">Color</span> <span class="p">{</span> <span class="n">Red</span><span class="p">,</span> <span class="n">Green</span><span class="p">,</span> <span class="n">Blue</span> <span class="p">};</span>
+<span class="k">constexpr</span> <span class="n">Color</span> <span class="n">favoriteColor</span> <span class="o">=</span> <span class="n">Green</span><span class="p">;</span>   
+</pre></table></code></div></div><p><strong>Array Types</strong>: An array whose elements are literal types is also considered a literal type.</p><div class="language-cpp highlighter-rouge"><div class="code-header"> <span label-text="Cpp"><i class="fas fa-code small"></i></span> <button aria-label="copy" title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre><td class="rouge-code"><pre><span class="k">constexpr</span> <span class="kt">int</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>  <span class="c1">// Literal type integer</span>
+<span class="k">constexpr</span> <span class="kt">int</span> <span class="n">factorials</span><span class="p">[</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>  <span class="c1">// An array which has elements literal type</span>
+    <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span> 
+<span class="p">};</span>
+</pre></table></code></div></div><h3> 3. It is initialized (by the declaration).</h3><p>This is similar to “1. The declaration is a definition.” A constexpr variable must be initialized at the time of its declaration.</p><div class="language-cpp highlighter-rouge"><div class="code-header"> <span label-text="Cpp"><i class="fas fa-code small"></i></span> <button aria-label="copy" title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="k">constexpr</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">programVersion</span> <span class="o">=</span> <span class="s">"1.0.0"</span><span class="p">;</span>
+</pre></table></code></div></div><h3> 4. The full-expression of its initialization is a constant expression. (until C++26)</h3><p>The expression used to initialize must be completely evaluated at compile time.</p><div class="language-cpp highlighter-rouge"><div class="code-header"> <span label-text="Cpp"><i class="fas fa-code small"></i></span> <button aria-label="copy" title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+</pre><td class="rouge-code"><pre><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span>
+<span class="k">constexpr</span> <span class="kt">int</span> <span class="nf">square</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">constexpr</span> <span class="kt">int</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+    <span class="k">constexpr</span> <span class="kt">int</span> <span class="n">squares</span><span class="p">[</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">square</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">square</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">square</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">square</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="n">square</span><span class="p">(</span><span class="mi">5</span><span class="p">)};</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">size</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Square of "</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="s">" is "</span> <span class="o">&lt;&lt;</span> <span class="n">squares</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p><strong><code class="language-plaintext highlighter-rouge">square</code> Function:</strong> Defined as a <code class="language-plaintext highlighter-rouge">constexpr</code> function, it takes an integer as input and returns its square. Since this function returns a constant expression, it can be invoked at compile time.</p><p><strong><code class="language-plaintext highlighter-rouge">squares</code> Array:</strong> This is a <code class="language-plaintext highlighter-rouge">constexpr</code> array that is initialized at compile time, with each element being initialized using the result of the <code class="language-plaintext highlighter-rouge">square</code> function. All expressions used for the array’s initialization are constant expressions.</p><h3> 5. It is constant-initializable. (since C++26)</h3><p>This expression means that a variable or object can be initialized as a constant. Here, <strong>“can be initialized as a constant”</strong> means that the variable or object is either declared using the <code class="language-plaintext highlighter-rouge">const</code> qualifier or can be treated as such in a given context. This may be related to <code class="language-plaintext highlighter-rouge">constexpr</code>, or it may simply apply to a <code class="language-plaintext highlighter-rouge">const</code> variable.</p><p>The term <strong>“constant-initializable”</strong> can be used when the initial value is either known at compile time or determined at runtime but must remain immutable.</p><div class="language-cpp highlighter-rouge"><div class="code-header"> <span label-text="Cpp"><i class="fas fa-code small"></i></span> <button aria-label="copy" title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="k">constexpr</span> <span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">5</span> <span class="o">+</span> <span class="mi">3</span><span class="p">;</span> <span class="c1">// Full-expression of its initialization is a constant expression</span>
+</pre></table></code></div></div><p>In the example above, x is declared as constexpr, and the initialization expression 5 + 3 is a constant expression that can be evaluated at compile time.</p><div class="language-cpp highlighter-rouge"><div class="code-header"> <span label-text="Cpp"><i class="fas fa-code small"></i></span> <button aria-label="copy" title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="k">const</span> <span class="kt">int</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">5</span> <span class="o">+</span> <span class="mi">3</span><span class="p">;</span> <span class="c1">// It is constant-initializable</span>
+</pre></table></code></div></div><p>Here, y is declared as const and initialized with 5 + 3. This initialization can be resolved at compile time, and y cannot be modified during runtime.</p><p><strong>The following are situations where <code class="language-plaintext highlighter-rouge">constant-initialization</code> is not possible.</strong></p><ul><li>The case where the value to be initialized is evaluated at runtime.<div class="language-cpp highlighter-rouge"><div class="code-header"> <span label-text="Cpp"><i class="fas fa-code small"></i></span> <button aria-label="copy" title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre><td class="rouge-code"><pre>  <span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span>
+  <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+  <span class="p">{</span>
+      <span class="k">const</span> <span class="kt">int</span> <span class="n">userValue</span><span class="p">;</span> <span class="c1">// error: A const variable must be initialized at the time of its declaration.</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">userValue</span><span class="p">;</span>
+      <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="p">}</span>
+</pre></table></code></div></div><p>This is a case where the initial value of a variable must be determined at runtime and cannot be known at compile time. For example, values obtained from user input or read from a file cannot be known during compilation.</p><li>When the value used for initialization contains a non-constant expression.<div class="language-cpp highlighter-rouge"><div class="code-header"> <span label-text="Cpp"><i class="fas fa-code small"></i></span> <button aria-label="copy" title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre><td class="rouge-code"><pre>  <span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span> <span class="c1">// non-constant</span>
+  <span class="k">const</span> <span class="kt">int</span> <span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="p">;</span> <span class="c1">// It is not an error, but it does not satisfy the **"constant-initializable"** condition.</span>
+</pre></table></code></div></div><p>In the example above, <code class="language-plaintext highlighter-rouge">b</code> is initialized using the value of <code class="language-plaintext highlighter-rouge">a</code>, but <code class="language-plaintext highlighter-rouge">a</code> is not a constant. Therefore, since <code class="language-plaintext highlighter-rouge">b</code>’s initialization depends on <code class="language-plaintext highlighter-rouge">a</code>’s value, it is difficult to consider <code class="language-plaintext highlighter-rouge">b</code> as <strong>“constant-initializable.”</strong> Even in this case, <code class="language-plaintext highlighter-rouge">b</code> is declared as <code class="language-plaintext highlighter-rouge">const</code>, so no compilation error occurs. However, this is not an ideal case of constant initialization.</p><li>When the return value of a function cannot be initialized as a constant.<div class="language-cpp highlighter-rouge"><div class="code-header"> <span label-text="Cpp"><i class="fas fa-code small"></i></span> <button aria-label="copy" title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+</pre><td class="rouge-code"><pre>  <span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span>  <span class="cp">#include</span> <span class="cpf">&lt;random&gt;</span><span class="cp">
+</span>
+  <span class="kt">int</span> <span class="nf">getRandomNumber</span><span class="p">()</span>
+  <span class="p">{</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">random_device</span> <span class="n">rd</span><span class="p">;</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">mt19937</span> <span class="n">gen</span><span class="p">(</span><span class="n">rd</span><span class="p">());</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">uniform_int_distribution</span><span class="o">&lt;&gt;</span> <span class="n">dis</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">);</span>
+      <span class="k">return</span> <span class="n">dis</span><span class="p">(</span><span class="n">gen</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">const</span> <span class="kt">int</span> <span class="n">randomValue</span> <span class="o">=</span> <span class="n">getRandomNumber</span><span class="p">();</span> <span class="c1">// It is initialized as constant, but it is not 'constant-initializable'</span>
+      <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="p">}</span>
+</pre></table></code></div></div></ul><p><br /><br /></p><p><a href="/posts/A-Deep-Dive-into-C++-constexpr-2/">A Deep Dive into constexpr(2/2)</a></p><p><br /></p><h2> References</h2><p><a href="https://en.cppreference.com/w/cpp/language/constexpr">constexpr specifier (since C++11) - cppreference.com</a></p></div><div class="post-tail-wrapper text-muted"><div class="post-meta mb-3"> <i class="far fa-folder-open fa-fw mr-1"></i> <a href='/categories/c/'>C++</a></div><div class="post-tags"> <i class="fa fa-tags fa-fw mr-1"></i> <a href="/tags/c/" class="post-tag no-text-decoration" >C++</a></div><div class="post-tail-bottom d-flex justify-content-between align-items-center mt-3 pt-5 pb-2"><div class="license-wrapper"> This post is licensed under <a href="https://creativecommons.org/licenses/by/4.0/"> CC BY 4.0 </a> by the author.</div><div class="share-wrapper"> <span class="share-label text-muted mr-1">Share</span> <span class="share-icons"> <a href="https://twitter.com/intent/tweet?text=A Deep Dive into C++ constexpr(1/2) - OrdinaryDennis&url=/posts/A-Deep-Dive-into-C++-constexpr-1/" data-toggle="tooltip" data-placement="top" title="Twitter" target="_blank" rel="noopener" aria-label="Twitter"> <i class="fa-fw fab fa-twitter"></i> </a> <a href="https://www.facebook.com/sharer/sharer.php?title=A Deep Dive into C++ constexpr(1/2) - OrdinaryDennis&u=/posts/A-Deep-Dive-into-C++-constexpr-1/" data-toggle="tooltip" data-placement="top" title="Facebook" target="_blank" rel="noopener" aria-label="Facebook"> <i class="fa-fw fab fa-facebook-square"></i> </a> <a href="https://telegram.me/share?text=A Deep Dive into C++ constexpr(1/2) - OrdinaryDennis&url=/posts/A-Deep-Dive-into-C++-constexpr-1/" data-toggle="tooltip" data-placement="top" title="Telegram" target="_blank" rel="noopener" aria-label="Telegram"> <i class="fa-fw fab fa-telegram"></i> </a> <i id="copy-link" class="fa-fw fas fa-link small" data-toggle="tooltip" data-placement="top" title="Copy link" title-succeed="Link copied successfully!"> </i> </span></div></div></div></div></div><div id="panel-wrapper" class="col-xl-3 pl-2 text-muted"><div class="access"><div id="access-lastmod" class="post"><div class="panel-heading">Recently Updated</div><ul class="post-content pl-0 pb-1 ml-1 mt-2"><li><a href="/posts/C++-20-Concept/">C++20 Concept</a><li><a href="/posts/Blocking-and-Non-Blocking-Socket/">Blocking and Non-Blocking Socket</a><li><a href="/posts/Find-Duplicated-Elements-Between-Two-Arrays-in-C++/">Find Duplicated Elements Between Two Arrays in C++</a><li><a href="/posts/Be-careful-Try-Not-to-Use-Invalidated-Iterator/">Be careful Try Not to Use Invalidated Iterator</a><li><a href="/posts/use-empty-instread-of-size/">When Checking whether Container is Empty, Use empty() instead of Comparing size() with zero</a></ul></div><div id="access-tags"><div class="panel-heading">Trending Tags</div><div class="d-flex flex-wrap mt-3 mb-1 mr-3"> <a class="post-tag" href="/tags/c/">C++</a> <a class="post-tag" href="/tags/algorithm/">Algorithm</a> <a class="post-tag" href="/tags/stl/">STL</a> <a class="post-tag" href="/tags/blogging/">Blogging</a> <a class="post-tag" href="/tags/network/">Network</a></div></div></div><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@1.0.1/dist/bootstrap-toc.min.js"></script><div id="toc-wrapper" class="pl-0 pr-4 mb-5"><div class="panel-heading pl-3 pt-2 mb-2">Contents</div><nav id="toc" data-toggle="toc"></nav></div></div></div><div class="row"><div class="col-12 col-lg-11 col-xl-8"><div id="tail-wrapper" class="pl-1 pr-1 pl-sm-2 pr-sm-2 pl-md-4 pr-md-4"><div id="related-posts" class="mt-5 mb-2 mb-sm-4"><h3 class="pt-2 mt-1 mb-4 ml-1" data-toc-skip>Further Reading</h3><div class="card-deck mb-4"><div class="card"> <a href="/posts/LeetCode-799.-Champagne-Tower/"><div class="card-body"> <em class="timeago small" date="2023-10-02 00:00:00 +0900" >Oct 2, 2023</em><h3 class="pt-0 mt-1 mb-3" data-toc-skip>LeetCode 799. Champagne Tower</h3><div class="text-muted small"><p> We stack glasses in a pyramid, where the first row has 1 glass, the second row has 2 glasses, and so on until the 100th row.  Each glass holds one cup of champagne. Then, some champagne is poured ...</p></div></div></a></div><div class="card"> <a href="/posts/Blocking-and-Non-Blocking-Socket/"><div class="card-body"> <em class="timeago small" date="2023-10-08 00:00:00 +0900" >Oct 8, 2023</em><h3 class="pt-0 mt-1 mb-3" data-toc-skip>Blocking and Non-Blocking Socket</h3><div class="text-muted small"><p> I was recently studying Overlapped I/O and I came across the concepts of blocking and non-blocking socket. I have already known the concepts of blocking socket but I didn’t know for non-blocking so...</p></div></div></a></div><div class="card"> <a href="/posts/tuple/"><div class="card-body"> <em class="timeago small" date="2023-10-09 00:00:00 +0900" >Oct 9, 2023</em><h3 class="pt-0 mt-1 mb-3" data-toc-skip>C++ std::tuple</h3><div class="text-muted small"><p> When you wanna deal with multiple types, what should you do? There are likely various ways but among them, today, I am going to discuss about std::tuple. Why you use std::tuple Suppose you need...</p></div></div></a></div></div></div><div class="post-navigation d-flex justify-content-between"> <a href="/posts/C++17-Structured-Binding/" class="btn btn-outline-primary" prompt="Older"><p>C++17 Structured Binding</p></a> <a href="/posts/A-Deep-Dive-into-C++-constexpr-2/" class="btn btn-outline-primary" prompt="Newer"><p>A Deep Dive into C++ constexpr(2/2)</p></a></div></div></div></div><footer class="d-flex w-100 justify-content-center"><div class="d-flex justify-content-between align-items-center text-muted"><div class="footer-left"><p class="mb-0"> © 2025 <a href="https://github.com/username">Dennis Oh</a>. <span data-toggle="tooltip" data-placement="top" title="Except where otherwise noted, the blog posts on this site are licensed under the Creative Commons Attribution 4.0 International (CC BY 4.0) License by the author.">Some rights reserved.</span></p></div><div class="footer-right"><p class="mb-0"> Powered by <a href="https://jekyllrb.com" target="_blank" rel="noopener">Jekyll</a> with <a href="https://github.com/cotes2020/jekyll-theme-chirpy" target="_blank" rel="noopener">Chirpy</a> theme.</p></div></div></footer></div><div id="search-result-wrapper" class="d-flex justify-content-center unloaded"><div class="col-12 col-sm-11 post-content"><div id="search-hints"><div id="access-tags"><div class="panel-heading">Trending Tags</div><div class="d-flex flex-wrap mt-3 mb-1 mr-3"> <a class="post-tag" href="/tags/c/">C++</a> <a class="post-tag" href="/tags/algorithm/">Algorithm</a> <a class="post-tag" href="/tags/stl/">STL</a> <a class="post-tag" href="/tags/blogging/">Blogging</a> <a class="post-tag" href="/tags/network/">Network</a></div></div></div><div id="search-results" class="d-flex flex-wrap justify-content-center text-muted mt-3"></div></div></div></div><div id="mask"></div><a id="back-to-top" href="#" aria-label="back-to-top" class="btn btn-lg btn-box-shadow" role="button"> <i class="fas fa-angle-up"></i> </a> <script src="https://cdn.jsdelivr.net/npm/simple-jekyll-search@1.10.0/dest/simple-jekyll-search.min.js"></script> <script> SimpleJekyllSearch({ searchInput: document.getElementById('search-input'), resultsContainer: document.getElementById('search-results'), json: '/assets/js/data/search.json', searchResultTemplate: '<div class="pl-1 pr-1 pl-sm-2 pr-sm-2 pl-lg-4 pr-lg-4 pl-xl-0 pr-xl-0"> <a href="{url}">{title}</a><div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1"> {categories} {tags}</div><p>{snippet}</p></div>', noResultsText: '<p class="mt-5">Oops! No result founds.</p>', templateMiddleware: function(prop, value, template) { if (prop === 'categories') { if (value === '') { return `${value}`; } else { return `<div class="mr-sm-4"><i class="far fa-folder fa-fw"></i>${value}</div>`; } } if (prop === 'tags') { if (value === '') { return `${value}`; } else { return `<div><i class="fa fa-tag fa-fw"></i>${value}</div>`; } } } }); </script> <script src="https://cdn.jsdelivr.net/combine/npm/lozad/dist/lozad.min.js,npm/magnific-popup@1/dist/jquery.magnific-popup.min.js,npm/clipboard@2/dist/clipboard.min.js"></script> <script defer src="/assets/js/dist/post.min.js"></script> <script src="https://cdn.jsdelivr.net/combine/npm/popper.js@1.16.1,npm/bootstrap@4/dist/js/bootstrap.min.js"></script> <script defer src="/app.js"></script> <script defer src="https://www.googletagmanager.com/gtag/js?id="></script> <script> document.addEventListener("DOMContentLoaded", function(event) { window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', ''); }); </script>
